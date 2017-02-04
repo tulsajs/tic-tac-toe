@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 
 class App extends Component {
+  /*
+  * Setup App State
+  */
   constructor() {
     super();
     const players = ['X', 'O'];
@@ -14,7 +17,11 @@ class App extends Component {
     }
   }
 
-  chooseLocation(index) {
+  /*
+  * OnClick Event for handling player square select
+  * params: index === square clicked board state
+  */
+  makeMove(index) {
     var { board, currentPlayer } = this.state;
     if (this.state.winner || board[index] !== '') return;
     board[index] = currentPlayer;
@@ -23,20 +30,16 @@ class App extends Component {
     this.checkWinner();
   }
 
-  pattern(letter) {
-    var pattern = [];
-    this.state.board.forEach((element, index) => {
-      if(element === letter) {
-        pattern.push(index);
-      }
-    })
-    return pattern;
-  }
-
+  /*
+  * Resets state for game
+  */
   resetGame() {
     this.setState({ board: ['','','','','','','','',''], winner: null})
   }
 
+  /*
+  * Check if winning combo matches
+  */
   checkWinner() {
     const winnerX = this.checkCombo('X');
     const winnerO = this.checkCombo('O');
@@ -50,6 +53,10 @@ class App extends Component {
     }
   }
 
+  /*
+  * Compare winning combo to current state
+  * params: player === X or O
+  */
   checkCombo(player) {
     const { winningCombinations } = this.state;
     return winningCombinations.some((combo) => {
@@ -57,6 +64,24 @@ class App extends Component {
     })
   }
 
+  /*
+  * Turn the current state into a pattern based on player
+  * params: letter === player X or O
+  */
+  pattern(letter) {
+    var pattern = [];
+    this.state.board.forEach((element, index) => {
+      if(element === letter) {
+        pattern.push(index);
+      }
+    })
+    return pattern;
+  }
+
+  /*
+  * Render a column containing three squares
+  * params: section === array of board pieces
+  */
   renderColumn(section) {
     return (
       <div className="column"> 
@@ -65,12 +90,19 @@ class App extends Component {
     )
   }
 
+  /*
+  * Render a square from the board
+  * params: index === index of board pieces
+  */
   renderSquare(index) {
     return (
-      <span className="square" onClick={() => this.chooseLocation(index)}>{this.state.board[index]}</span>
+      <span className="square" onClick={() => this.makeMove(index)}>{this.state.board[index]}</span>
     )
   }
 
+  /*
+  * Render current player and winner info
+  */
   renderInfo() {
     const { currentPlayer, winner } = this.state;
     return (
@@ -81,6 +113,9 @@ class App extends Component {
     )
   }
 
+  /*
+  * Render winner and reset button
+  */
   renderWinner() {
     const { winner } = this.state;
     return (
@@ -91,6 +126,9 @@ class App extends Component {
     )
   }
 
+  /*
+  * Render entire app
+  */
   render() {
     return (
       <div className="App">
