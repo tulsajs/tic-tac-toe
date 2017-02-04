@@ -38,45 +38,67 @@ class App extends Component {
   }
 
   checkWinner() {
-    var winnerX = this.state.winningCombinations.some((combo) => {
-      return combo.every(elem => this.pattern('X').indexOf(elem) > -1);
-    })
-    var winnerO = this.state.winningCombinations.some((combo) => {
-      return combo.every(elem => this.pattern('O').indexOf(elem) > -1);
-    })
+    const winnerX = this.checkCombo('X');
+    const winnerO = this.checkCombo('O');
+
     if (winnerX) {
-      this.setState({winner: 'X' })
+      this.setState({winner: 'X'})
     } else if(winnerO) {
-      this.setState({winner: 'O' })
+      this.setState({winner: 'O'})
     } else if(this.state.board.every(elem => elem !== "")) {
-      this.setState({winner: 'Cat' })
+      this.setState({winner: 'Cat'})
     }
+  }
+
+  checkCombo(player) {
+    const { winningCombinations } = this.state;
+    return winningCombinations.some((combo) => {
+      return combo.every(elem => this.pattern(player).indexOf(elem) > -1);
+    })
+  }
+
+  renderColumn(section) {
+    return (
+      <div className="column"> 
+        { section.map((index) => this.renderSquare(index)) }
+      </div>
+    )
+  }
+
+  renderSquare(index) {
+    return (
+      <span className="square" onClick={() => this.chooseLocation(index)}>{this.state.board[index]}</span>
+    )
+  }
+
+  renderInfo() {
+    const { currentPlayer, winner } = this.state;
+    return (
+      <div className="info">
+        <div className="current">Current Player is {currentPlayer}</div>
+        { winner ? this.renderWinner() : null }
+      </div>
+    )
+  }
+
+  renderWinner() {
+    const { winner } = this.state;
+    return (
+      <div>
+        <div className="winner">Winner is {winner}</div>
+        <button className="reset" onClick={() => this.resetGame()}>Reset Game</button>
+      </div>
+    )
   }
 
   render() {
     return (
       <div className="App">
-        <div className="info">
-          <div className="current">Current Player is {this.state.currentPlayer}</div>
-          { this.state.winner ? <div className="winner">Winner is {this.state.winner}</div> : null }
-          { this.state.winner ? <button className="reset" onClick={() => this.resetGame()}>Reset Game</button> : null }
-        </div>
+        {this.renderInfo()}
         <div className="ticTacToe">
-          <div className="column">
-            <span className="square" onClick={() => this.chooseLocation(0)}>{this.state.board[0]}</span>
-            <span className="square" onClick={() => this.chooseLocation(1)}>{this.state.board[1]}</span>
-            <span className="square" onClick={() => this.chooseLocation(2)}>{this.state.board[2]}</span>
-          </div>
-          <div className="column">
-            <span className="square" onClick={() => this.chooseLocation(3)}>{this.state.board[3]}</span>
-            <span className="square" onClick={() => this.chooseLocation(4)}>{this.state.board[4]}</span>
-            <span className="square" onClick={() => this.chooseLocation(5)}>{this.state.board[5]}</span>
-          </div>
-          <div className="column">
-            <span className="square" onClick={() => this.chooseLocation(6)}>{this.state.board[6]}</span>
-            <span className="square" onClick={() => this.chooseLocation(7)}>{this.state.board[7]}</span>
-            <span className="square" onClick={() => this.chooseLocation(8)}>{this.state.board[8]}</span>
-          </div>
+          {this.renderColumn([0,1,2])}
+          {this.renderColumn([3,4,5])}
+          {this.renderColumn([6,7,8])}
         </div>
       </div>
     );
