@@ -15,8 +15,8 @@ class App extends Component {
   }
 
   chooseLocation(index) {
-    if (this.state.winner) return;
     var { board, currentPlayer } = this.state;
+    if (this.state.winner || board[index] !== '') return;
     board[index] = currentPlayer;
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     this.setState({board, currentPlayer})
