@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Info from './Info';
+import Firework from './Firework';
 import './App.css';
 
 class App extends Component {
@@ -15,6 +17,8 @@ class App extends Component {
       winner: null,
       winningCombinations: [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
     }
+
+    this.resetGame = this.resetGame.bind(this);
   }
 
   /*
@@ -41,6 +45,7 @@ class App extends Component {
   * Check if winning combo matches
   */
   checkWinner() {
+    console.log('running')
     const winnerX = this.checkCombo('X');
     const winnerO = this.checkCombo('O');
 
@@ -96,33 +101,7 @@ class App extends Component {
   */
   renderSquare(index) {
     return (
-      <span className="square" onClick={() => this.makeMove(index)}>{this.state.board[index]}</span>
-    )
-  }
-
-  /*
-  * Render current player and winner info
-  */
-  renderInfo() {
-    const { currentPlayer, winner } = this.state;
-    return (
-      <div className="info">
-        <div className="current">Current Player is {currentPlayer}</div>
-        { winner ? this.renderWinner() : null }
-      </div>
-    )
-  }
-
-  /*
-  * Render winner and reset button
-  */
-  renderWinner() {
-    const { winner } = this.state;
-    return (
-      <div>
-        <div className="winner">Winner is {winner}</div>
-        <button className="reset" onClick={() => this.resetGame()}>Reset Game</button>
-      </div>
+      <span key={index} className="square" onClick={() => this.makeMove(index)}>{this.state.board[index]}</span>
     )
   }
 
@@ -130,10 +109,13 @@ class App extends Component {
   * Render entire app
   */
   render() {
+    const { winner } = this.state;
     return (
       <div className="App">
-        {this.renderInfo()}
+        <Info {...this.state} onClick={this.resetGame} />
+        <Firework {...this.state} />
         <div className="ticTacToe">
+          { winner === 'Cat' ? <img className="catImage" src="http://thecatapi.com/api/images/get?format=src&type=gif"/> : null }
           {this.renderColumn([0,1,2])}
           {this.renderColumn([3,4,5])}
           {this.renderColumn([6,7,8])}
