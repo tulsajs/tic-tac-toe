@@ -11,7 +11,13 @@ class App extends Component {
   */
   constructor(props) {
     super(props);
+    console.log(props)
     this.resetGame = this.resetGame.bind(this);
+    
+    props.socket.on('news', function (data) {
+      console.log(data);
+      props.socket.emit('my other event', { my: 'data' });
+    });
   }
 
   /*
