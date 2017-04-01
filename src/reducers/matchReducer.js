@@ -1,10 +1,10 @@
 import * as types from "../actions/actionTypes";
 
-const players = ["X", "O"];
+const players = [];
 let match = {
   board: ["", "", "", "", "", "", "", "", ""],
   players: players,
-  currentPlayer: players[Math.floor(Math.random() * players.length)],
+  currentPlayer: null,
   winner: null,
   winningCombinations: [
     [0, 1, 2],
@@ -30,6 +30,12 @@ export default (state = match, action) => {
         board: board,
         winner: checkWinner(board)
       };
+    case types.SET_PLAYERS:
+      return {
+        ...state,
+        players: action.players,
+        currentPlayer: action.currentPlayer
+      }
     case types.RESET_GAME:
       return match;
     default:

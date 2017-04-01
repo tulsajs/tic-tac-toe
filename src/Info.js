@@ -2,14 +2,16 @@ import React, { Component } from "react";
 
 class Info extends Component {
   render() {
-    const { currentPlayer, winner, onClick } = this.props;
+    console.log(this.props)
+    const { match, socket } = this.props;
     return (
       <div className="info">
-        <div className="current">Current Player is {currentPlayer}</div>
-        {winner
+        <div className="current">Your id is {socket.id}</div>
+        <div className="current">Current Player is {match.currentPlayer}</div>
+        {match.winner
           ? <div>
-              <div className="winner">Winner is {winner}</div>
-              <button className="reset" onClick={onClick}>Reset Game</button>
+              <div className="winner">Winner is {match.winner}</div>
+              <button className="reset" onClick={match.onClick}>Reset Game</button>
             </div>
           : null}
       </div>

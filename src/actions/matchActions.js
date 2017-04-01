@@ -20,3 +20,11 @@ export const resetGame = () => {
     type: types.RESET_GAME
   };
 };
+
+export const setPlayers = (data) => {
+  return {
+    type: types.SET_PLAYERS,
+    players: data.players,
+    currentPlayer: data.currentPlayer
+  };
+};

@@ -11,12 +11,13 @@ class App extends Component {
   */
   constructor(props) {
     super(props);
-    console.log(props)
     this.resetGame = this.resetGame.bind(this);
-    
-    props.socket.on('news', function (data) {
-      console.log(data);
-      props.socket.emit('my other event', { my: 'data' });
+  }
+
+  componentDidMount() {
+    this.props.socket.on('startGame', (data) => {
+      this.resetGame();
+      this.props.actions.setPlayers(data);
     });
   }
 
@@ -68,12 +69,13 @@ class App extends Component {
     const { winner } = this.props.match;
     return (
       <div className="App">
-        <Info {...this.props.match} onClick={this.resetGame} />
+        <Info {...this.props} onClick={this.resetGame} />
         <Firework {...this.props.match} />
         <div className="ticTacToe">
           {winner === "Cat"
             ? <img
                 className="catImage"
+                alt="cats"
                 src="http://thecatapi.com/api/images/get?format=src&amp;type=gif"
               />
             : null}
