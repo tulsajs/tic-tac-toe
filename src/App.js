@@ -1,23 +1,16 @@
-import React, { Component } from 'react';
-import Info from './Info';
-import Firework from './Firework';
-import './App.css';
+import React, { Component } from "react";
+import Info from "./Info";
+import Firework from "./Firework";
+import "./App.css";
+import reduxHelper from "./helpers/reduxHelper";
+import * as matchActions from "./actions/matchActions";
 
 class App extends Component {
   /*
   * Setup App State
   */
-  constructor() {
-    super();
-    const players = ['X', 'O'];
-    this.state = {
-      board: ['','','','','','','','',''],
-      players: players,
-      currentPlayer: players[Math.floor(Math.random()*players.length)],
-      winner: null,
-      winningCombinations: [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
-    }
-
+  constructor(props) {
+    super(props);
     this.resetGame = this.resetGame.bind(this);
   }
 
@@ -25,62 +18,17 @@ class App extends Component {
   * OnClick Event for handling player square select
   * params: index === square clicked board state
   */
-  makeMove(index) {
-    var { board, currentPlayer } = this.state;
-    if (this.state.winner || board[index] !== '') return;
-    board[index] = currentPlayer;
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    this.setState({board, currentPlayer})
-    this.checkWinner();
+  makeMove(position) {
+    var { match, actions } = this.props;
+    if (match.winner || match.board[position] !== "") return;
+    actions.makeMove(match.currentPlayer, position);
   }
 
   /*
   * Resets state for game
   */
   resetGame() {
-    this.setState({ board: ['','','','','','','','',''], winner: null})
-  }
-
-  /*
-  * Check if winning combo matches
-  */
-  checkWinner() {
-    console.log('running')
-    const winnerX = this.checkCombo('X');
-    const winnerO = this.checkCombo('O');
-
-    if (winnerX) {
-      this.setState({winner: 'X'})
-    } else if(winnerO) {
-      this.setState({winner: 'O'})
-    } else if(this.state.board.every(elem => elem !== "")) {
-      this.setState({winner: 'Cat'})
-    }
-  }
-
-  /*
-  * Compare winning combo to current state
-  * params: player === X or O
-  */
-  checkCombo(player) {
-    const { winningCombinations } = this.state;
-    return winningCombinations.some((combo) => {
-      return combo.every(elem => this.pattern(player).indexOf(elem) > -1);
-    })
-  }
-
-  /*
-  * Turn the current state into a pattern based on player
-  * params: letter === player X or O
-  */
-  pattern(letter) {
-    var pattern = [];
-    this.state.board.forEach((element, index) => {
-      if(element === letter) {
-        pattern.push(index);
-      }
-    })
-    return pattern;
+    this.props.actions.resetGame();
   }
 
   /*
@@ -89,10 +37,10 @@ class App extends Component {
   */
   renderColumn(section) {
     return (
-      <div className="column"> 
-        { section.map((index) => this.renderSquare(index)) }
+      <div className="column">
+        {section.map(index => this.renderSquare(index))}
       </div>
-    )
+    );
   }
 
   /*
@@ -101,28 +49,35 @@ class App extends Component {
   */
   renderSquare(index) {
     return (
-      <span key={index} className="square" onClick={() => this.makeMove(index)}>{this.state.board[index]}</span>
-    )
+      <span key={index} className="square" onClick={() => this.makeMove(index)}>
+        {this.props.match.board[index]}
+      </span>
+    );
   }
 
   /*
   * Render entire app
   */
   render() {
-    const { winner } = this.state;
+    const { winner } = this.props.match;
     return (
       <div className="App">
-        <Info {...this.state} onClick={this.resetGame} />
-        <Firework {...this.state} />
+        <Info {...this.props.match} onClick={this.resetGame} />
+        <Firework {...this.props.match} />
         <div className="ticTacToe">
-          { winner === 'Cat' ? <img className="catImage" src="http://thecatapi.com/api/images/get?format=src&type=gif"/> : null }
-          {this.renderColumn([0,1,2])}
-          {this.renderColumn([3,4,5])}
-          {this.renderColumn([6,7,8])}
+          {winner === "Cat"
+            ? <img
+                className="catImage"
+                src="http://thecatapi.com/api/images/get?format=src&amp;type=gif"
+              />
+            : null}
+          {this.renderColumn([0, 1, 2])}
+          {this.renderColumn([3, 4, 5])}
+          {this.renderColumn([6, 7, 8])}
         </div>
       </div>
     );
   }
 }
 
-export default App;
+export default reduxHelper(App, matchActions);
